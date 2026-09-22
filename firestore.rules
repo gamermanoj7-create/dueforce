@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function validBusinessCreate(uid) {
+      return isOwner(uid) && request.resource.data.ownerUid == uid;
+    }
+    match /businesses/{uid} {
+      allow create: if validBusinessCreate(uid);
+      allow read, update: if isOwner(uid) && resource.data.ownerUid == uid;
+      allow delete: if false;
+      match /customers/{id} {
+        allow read, create, update, delete: if isOwner(uid);
+      }
+      match /invoices/{id} {
+        allow read, create, update, delete: if isOwner(uid);
+      }
+      match /payments/{id} {
+        allow read, create, update, delete: if isOwner(uid);
+      }
+      match /reminders/{id} {
+        allow read, create: if isOwner(uid);
+        allow update, delete: false;
+      }
+      match /automationRules/{id} {
+        allow read, create, update, delete: if isOwner(uid);
+      }
+      match /legalDrafts/{id} {
+        allow read, create, update, delete: if isOwner(uid);
+      }
+    }
+    match /webhookEvents/{id} { allow read, write: if false; }
+  }
+}

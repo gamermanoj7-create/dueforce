@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080a0f">
+<title>DUEFORCE — Receivables Control</title>
+<meta name="description" content="DUEFORCE helps Indian businesses track customers, invoices, payments and outstanding receivables.">
+<style>
+:root{--bg:#07090d;--panel:#0d1118;--panel2:#111722;--line:#202a38;--text:#f7f9fc;--muted:#8d98aa;--gold:#f5c95b;--green:#39d49a;--red:#ff626b;--blue:#69a8ff;--shadow:0 24px 80px #0009}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 0,#19150b 0,transparent 30%),radial-gradient(circle at 90% 10%,#0d1730 0,transparent 28%),var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}.muted{color:var(--muted)}
+.splash{position:fixed;inset:0;z-index:100;background:#05070a;display:grid;place-items:center}.splash-inner{text-align:center}.brand{font-size:clamp(48px,13vw,110px);font-weight:950;letter-spacing:.16em;animation:brandIn 1.35s ease both}.brand-sub{margin-top:8px;color:var(--gold);font-weight:800;letter-spacing:.38em;font-size:12px;animation:fadeUp 1.5s .2s both}@keyframes brandIn{0%{opacity:0;transform:translateY(30px) scale(.88);filter:blur(12px)}55%{opacity:1;transform:none;filter:none}100%{opacity:1}}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.auth{min-height:100vh;display:grid;place-items:center;padding:22px}.auth-card{width:min(450px,100%);background:#0c1017f2;border:1px solid var(--line);border-radius:28px;padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}.auth-card:before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#f5c95b18;filter:blur(40px);right:-120px;top:-120px}
+.logo{font-weight:950;letter-spacing:.12em}.logo span{color:var(--gold)}h1,h2,h3{margin:0 0 8px}label{display:block;color:#b9c3d1;margin:14px 0 7px}.input{width:100%;padding:13px 14px;border:1px solid var(--line);background:#080b10;color:var(--text);border-radius:12px;outline:0}.input:focus{border-color:#65748b;box-shadow:0 0 0 3px #ffffff08}.btn{border:1px solid var(--line);background:#151b25;color:var(--text);padding:11px 15px;border-radius:12px;transition:.18s}.btn:hover{transform:translateY(-1px);border-color:#39485c}.btn.primary{background:var(--gold);color:#16120a;border-color:var(--gold);font-weight:850}.btn.danger{background:#2b1115;border-color:#61252c}.btn.full{width:100%}.tabs{display:flex;gap:6px;margin:20px 0}.tabs button{flex:1}
+.top{position:sticky;top:0;z-index:30;height:68px;border-bottom:1px solid var(--line);background:#07090de8;backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:space-between;padding:0 20px}.top-left{display:flex;align-items:center;gap:18px}.nav{display:flex;gap:3px;overflow:auto}.nav button{background:transparent;border:0;color:var(--muted);padding:10px 11px;border-radius:10px;white-space:nowrap}.nav button.active,.nav button:hover{color:var(--text);background:#141a23}.wrap{width:min(1240px,calc(100% - 30px));margin:26px auto 70px}.view{display:none}.view.active{display:block}.grid{display:grid;gap:14px}.cards{grid-template-columns:repeat(4,1fr)}.card{background:linear-gradient(145deg,#111722,#0b0f15);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 12px 44px #0005}.metric{font-size:29px;font-weight:900;margin-top:8px}.gold{color:var(--gold)}.red{color:var(--red)}.green{color:var(--green)}.blue{color:var(--blue)}.cols{grid-template-columns:1.4fr .6fr;margin-top:14px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{padding:12px 9px;border-bottom:1px solid var(--line);text-align:left}.table th{color:#8994a5;font-size:11px;text-transform:uppercase;letter-spacing:.07em}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#151b24;color:#b9c2d0;font-size:11px;font-weight:750}.pill.green{background:#0c2a21;color:#65e6b5}.pill.red{background:#301317;color:#ff858c}.pill.blue{background:#10233e;color:#87baff}.empty{padding:34px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}.modal{position:fixed;inset:0;z-index:80;background:#000b;display:none;align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}.modal-box{width:min(720px,100%);max-height:92vh;overflow:auto;background:#0d121a;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.wide{grid-column:1/-1}.toast{position:fixed;right:16px;bottom:16px;z-index:120;background:#151b25;border:1px solid var(--line);padding:13px 16px;border-radius:12px;display:none;max-width:calc(100% - 32px)}.toast.show{display:block}.legal{line-height:1.7;color:#b8c0cd}.notice{border-left:3px solid var(--gold);padding:12px;background:#1a160c;border-radius:8px}.danger-note{border-left:3px solid var(--red);padding:12px;background:#1a0d10;border-radius:8px}.footer{text-align:center;color:#687487;margin-top:50px}.mobile-menu{display:none}.statline{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mini{font-size:12px;color:var(--muted)}.loading{opacity:.65;pointer-events:none}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions .btn{padding:8px 10px;font-size:12px}.btn.small{padding:8px 10px;font-size:12px}.btn.danger{color:#ff9097}.confirm-text{line-height:1.6;color:#b8c0cd}
+@media(max-width:980px){.cards{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.nav{display:none}.mobile-menu{display:block}.top{padding:0 12px}.wrap{width:min(100% - 20px,760px)}}
+@media(max-width:600px){.cards{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.metric{font-size:22px}.top-left{gap:8px}.top-right .btn.logout{display:none}.auth-card{padding:22px}.table{min-width:600px}}
+
+
+/* V9 MOBILE-FIRST FIX */
+.top-left{min-width:0;flex:1}
+.brand-lockup{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{font-size:13px;font-weight:950;letter-spacing:.14em;color:#fff;white-space:nowrap}
+.brand-mark span{color:var(--gold)}
+.brand-caption{font-size:10px;color:#667386;letter-spacing:.12em;text-transform:uppercase;border-left:1px solid var(--line);padding-left:10px;white-space:nowrap}
+.top-right{flex-shrink:0}
+.mobile-menu{display:none;font-weight:900}
+
+.bottom-nav{display:none}
+
+@media(max-width:1199px){
+  body{overflow-x:hidden}
+  .top{
+    height:64px;
+    padding:0 10px;
+    position:sticky;
+    z-index:70;
+  }
+  .top-left{gap:0}
+  .brand-lockup{min-width:0}
+  .brand-caption{display:none}
+  .brand-mark{font-size:13px;letter-spacing:.08em}
+  .business-label{display:none!important}
+  .top-right .logout{display:none}
+  .mobile-menu{
+    display:block!important;
+    min-width:44px;
+    height:42px;
+    padding:0 11px;
+    border-color:#39485c;
+    background:#111824;
+  }
+
+  .nav{
+    display:none!important;
+    position:fixed;
+    left:10px;
+    right:10px;
+    top:72px;
+    max-height:calc(100vh - 90px);
+    overflow:auto;
+    padding:8px;
+    background:#0a1018f8;
+    border:1px solid #293548;
+    border-radius:18px;
+    box-shadow:0 20px 60px #000c;
+    flex-direction:column;
+    gap:3px;
+    backdrop-filter:blur(22px);
+    z-index:100;
+  }
+  .nav.open{display:flex!important}
+  .nav button{text-align:left;padding:13px 14px;width:100%}
+
+  .wrap{
+    width:min(100% - 18px,760px);
+    margin:16px auto 104px;
+  }
+  .view>.row:first-child{align-items:flex-start}
+  .view h1{font-size:25px}
+  .view>.row:first-child .btn.primary{white-space:nowrap}
+
+  .cards{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .card{border-radius:16px;padding:14px}
+  .metric{font-size:23px}
+  .cols{grid-template-columns:1fr;gap:10px}
+  .toolbar{gap:6px}
+  .form-grid{grid-template-columns:1fr}
+  .wide{grid-column:auto}
+
+  .bottom-nav{
+    position:fixed;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    left:8px;
+    right:8px;
+    bottom:8px;
+    height:66px;
+    z-index:80;
+    background:#0a0f17f4;
+    border:1px solid #263142;
+    border-radius:20px;
+    box-shadow:0 16px 50px #000c;
+    backdrop-filter:blur(22px);
+    padding:6px;
+  }
+  .bottom-nav button{
+    border:0;
+    background:transparent;
+    color:#7e8999;
+    border-radius:14px;
+    font-size:10px;
+    font-weight:850;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+  }
+  .bottom-nav button .bn-icon{font-size:18px;line-height:1}
+  .bottom-nav button.active{background:#171e2a;color:var(--gold)}
+  .table{min-width:560px}
+  .footer{margin-bottom:20px}
+}
+
+@media(max-width:600px){
+  .top{height:60px}
+  .brand-mark{font-size:12px}
+  .mobile-menu{min-width:42px;height:40px}
+  .wrap{width:calc(100% - 12px);margin-top:12px}
+  .cards{grid-template-columns:1fr 1fr;gap:8px}
+  .cards .card{padding:12px}
+  .metric{font-size:21px}
+  .view>.row:first-child{gap:8px}
+  .view>.row:first-child .btn.primary{padding:9px 10px;font-size:12px}
+  .bottom-nav{left:6px;right:6px;bottom:6px;height:64px}
+  .bottom-nav button{font-size:9px}
+}
+
+.quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.quick-actions .btn{flex:1;min-width:110px}
+@media(max-width:600px){.quick-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}.quick-actions .btn{min-width:0;padding:10px 7px;font-size:12px}}
+
+/* V10 MENU FIX */
+.mobile-drawer,.menu-backdrop{display:none}
+@media(max-width:1199px){
+  .desktop-nav{display:none!important}
+  .top{height:62px;padding:0 10px}
+  .mobile-menu{display:inline-flex!important;align-items:center;justify-content:center}
+  .mobile-drawer{
+    display:flex;
+    position:fixed;
+    z-index:1001;
+    top:0;
+    right:0;
+    bottom:0;
+    width:min(330px,88vw);
+    padding:18px 14px;
+    flex-direction:column;
+    background:#0a0f17;
+    border-left:1px solid #2b3748;
+    box-shadow:-24px 0 70px #000c;
+    transform:translateX(105%);
+    transition:transform .22s ease;
+  }
+  .mobile-drawer.open{transform:translateX(0)}
+  .menu-backdrop{
+    position:fixed;
+    z-index:1000;
+    inset:0;
+    background:#0009;
+    backdrop-filter:blur(3px);
+  }
+  .menu-backdrop.open{display:block}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 18px;border-bottom:1px solid #202a38}
+  .drawer-brand{font-size:18px;font-weight:950;letter-spacing:.1em}
+  .drawer-brand span{color:var(--gold)}
+  .drawer-sub{font-size:10px;color:#788496;margin-top:3px;text-transform:uppercase;letter-spacing:.14em}
+  .drawer-close{width:42px;height:42px;border-radius:12px;border:1px solid #2b3748;background:#151c27;color:#fff;font-size:28px;line-height:1}
+  .drawer-links{display:flex;flex-direction:column;gap:5px;padding-top:14px}
+  .drawer-links button{
+    width:100%;border:1px solid transparent;background:transparent;color:#aeb8c7;
+    border-radius:13px;padding:13px 14px;text-align:left;font-weight:800;
+    display:flex;align-items:center;gap:12px;font-size:14px;
+  }
+  .drawer-links button:hover,.drawer-links button.active{background:#171f2b;color:#fff;border-color:#2a3749}
+  .drawer-links button:first-child{color:var(--gold)}
+  .drawer-links button span{flex:1}
+  .drawer-foot{margin-top:auto;color:#5f6c7e;font-size:11px;padding:16px 4px 4px}
+}
+@media(min-width:1200px){.mobile-menu{display:none!important}}
+
+/* V11 FINAL MOBILE MENU OVERRIDE */
+@media (max-width:1400px){
+  .desktop-nav{display:none!important}
+  .mobile-menu{display:inline-flex!important;align-items:center;justify-content:center!important}
+  .mobile-drawer{display:flex!important}
+}
+@media (min-width:1401px){
+  .desktop-nav{display:flex!important}
+  .mobile-menu{display:none!important}
+  .mobile-drawer,.menu-backdrop{display:none!important}
+}
+
+/* V12 MOBILE MENU HARD FIX */
+@media (max-width: 1400px){
+  body .desktop-nav,
+  body nav.desktop-nav,
+  body .top .desktop-nav{display:none!important;visibility:hidden!important;width:0!important;max-width:0!important;overflow:hidden!important}
+  body .mobile-menu{display:inline-flex!important;visibility:visible!important;opacity:1!important}
+  body .mobile-drawer{display:flex!important}
+}
+@media (min-width:1401px){
+  body .desktop-nav{display:flex!important}
+  body .mobile-menu{display:none!important}
+  body .mobile-drawer,body .menu-backdrop{display:none!important}
+}
+@media (max-width:600px){
+  .top-left{min-width:0;flex:1}
+  .brand-lockup{min-width:0}
+  .brand-caption{display:none}
+  .business-label{display:none}
+  .top-right{gap:6px!important}
+  .top-right .logout{display:none!important}
+  .mobile-menu{flex:0 0 44px!important}
+}
+</style>
+
+<style>
+body.force-mobile-ui .desktop-nav{display:none!important}
+body.force-mobile-ui .mobile-menu{display:inline-flex!important;align-items:center;justify-content:center!important}
+</style>
+</head>
+<body>
+<div id="splash" class="splash"><div class="splash-inner"><div class="brand">MRLB</div><div class="brand-sub">DUEFORCE</div></div></div>
+
+<section id="auth" class="auth hidden">
+  <div class="auth-card">
+    <div class="logo">MRLB <span>· DUEFORCE</span></div>
+    <h1 style="margin-top:18px">Receivables, under control.</h1>
+    <p class="muted">Your account starts empty. Add your own customers, invoices and payments.</p>
+    <div class="tabs">
+      <button id="loginTab" class="btn primary" onclick="setAuthMode('login')">Login</button>
+      <button id="signupTab" class="btn" onclick="setAuthMode('signup')">Create account</button>
+    </div>
+    <form id="authForm">
+      <label>Email</label><input id="authEmail" class="input" type="email" required autocomplete="email">
+      <label>Password</label><input id="authPassword" class="input" type="password" minlength="6" required autocomplete="current-password">
+      <div id="businessNameWrap" class="hidden"><label>Business name</label><input id="businessName" class="input" placeholder="Your business name"></div>
+      <button id="authSubmit" class="btn primary full" style="margin-top:18px">Login</button>
+    </form>
+    <p id="authError" class="muted" style="margin-top:12px"></p>
+  </div>
+</section>
+
+<div id="app" class="app hidden">
+<header class="top">
+  <div class="top-left">
+    <div class="brand-lockup"><div class="brand-mark">DUE<span>FORCE</span></div><div class="brand-caption">Receivables control</div></div>
+    <nav id="nav" class="nav desktop-nav">
+      <button data-view="dashboard" class="active">Dashboard</button><button data-view="customers">Customers</button><button data-view="invoices">Invoices</button><button data-view="payments">Payments</button><button data-view="reminders">Reminders</button><button data-view="legal">Legal</button><button data-view="settings">Settings</button>
+    </nav>
+  </div>
+  <div class="top-right row"><span id="businessLabel" class="muted business-label"></span><button class="btn logout" onclick="logout()">Logout</button><button class="btn mobile-menu" onclick="toggleNav()">☰</button></div>
+</header>
+<div id="menuBackdrop" class="menu-backdrop" onclick="closeNav()"></div>
+<aside id="mobileDrawer" class="mobile-drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div>
+      <div class="drawer-brand">DUE<span>FORCE</span></div>
+      <div class="drawer-sub">Receivables Control</div>
+    </div>
+    <button class="drawer-close" onclick="closeNav()" aria-label="Close menu">×</button>
+  </div>
+  <div class="drawer-links">
+    <button data-view="dashboard" onclick="mobileNavigate('dashboard')">⌂ <span>Dashboard</span></button>
+    <button data-view="customers" onclick="mobileNavigate('customers')">♙ <span>Customers</span></button>
+    <button data-view="invoices" onclick="mobileNavigate('invoices')">▤ <span>Invoices</span></button>
+    <button data-view="payments" onclick="mobileNavigate('payments')">₹ <span>Payments</span></button>
+    <button data-view="reminders" onclick="mobileNavigate('reminders')">◉ <span>Reminders</span></button>
+    <button data-view="legal" onclick="mobileNavigate('legal')">§ <span>Legal</span></button>
+    <button data-view="settings" onclick="mobileNavigate('settings')">⚙ <span>Settings</span></button>
+  </div>
+  <div class="drawer-foot">DUEFORCE · Receivables control</div>
+</aside>
+
+
+<main class="wrap">
+<section id="dashboard" class="view active">
+  <div class="row"><div><h1>Dashboard</h1><p class="muted">Live receivables from your Firebase account.</p></div><button class="btn primary" onclick="openInvoice()">+ New invoice</button></div>
+  <div class="quick-actions">
+    <button class="btn primary" onclick="openInvoice()">＋ Invoice</button>
+    <button class="btn" onclick="openCustomer()">＋ Customer</button>
+    <button class="btn" onclick="showView('payments')">₹ Payment</button>
+  </div>
+  <div class="grid cards" style="margin-top:12px">
+    <div class="card"><span class="muted">Outstanding</span><div id="mOutstanding" class="metric">₹0</div></div>
+    <div class="card"><span class="muted">Due today</span><div id="mToday" class="metric gold">₹0</div></div>
+    <div class="card"><span class="muted">Overdue</span><div id="mOverdue" class="metric red">₹0</div></div>
+    <div class="card"><span class="muted">Recovery rate</span><div id="mRecovery" class="metric green">0%</div></div>
+  </div>
+  <div class="grid cols">
+    <div class="card"><div class="row"><h3>Recent invoices</h3><button class="btn" onclick="showView('invoices')">View all</button></div><div id="recentInvoices" style="margin-top:12px"></div></div>
+    <div class="card"><h3>Due engine</h3><p class="muted">This free version calculates due status locally from your Firestore data. No fake records are created.</p><div class="pill green">Firebase connected</div><div class="statline"><span class="mini">Paid invoices: stop reminder eligibility</span><span class="mini">Partial payment: balance reduced</span></div></div>
+  </div>
+</section>
+
+<section id="customers" class="view">
+  <div class="row"><div><h1>Customers</h1><p class="muted">Your customer ledger.</p></div><button class="btn primary" onclick="openCustomer()">+ Customer</button></div>
+  <div class="card" style="margin-top:15px"><input id="customerSearch" class="input" placeholder="Search name, phone or email" oninput="renderCustomers()"><div id="customersTable" style="margin-top:12px"></div></div>
+</section>
+
+<section id="invoices" class="view">
+  <div class="row"><div><h1>Invoices</h1><p class="muted">Invoices and live outstanding balances.</p></div><button class="btn primary" onclick="openInvoice()">+ Invoice</button></div>
+  <div class="card" style="margin-top:15px"><div id="invoicesTable"></div></div>
+</section>
+
+<section id="payments" class="view">
+  <div><h1>Payments</h1><p class="muted">Recorded payments from your account.</p></div>
+  <div class="card" style="margin-top:15px"><div id="paymentsTable"></div></div>
+</section>
+
+<section id="reminders" class="view">
+  <div class="row"><div><h1>Reminders</h1><p class="muted">Reminder history. Automated sending requires a compliant messaging provider/backend.</p></div></div>
+  <div class="card" style="margin-top:15px"><div id="remindersTable"></div></div>
+</section>
+
+<section id="legal" class="view">
+  <h1>Legal workspace</h1><p class="muted">Factual commercial-payment drafts for review. Not legal advice.</p>
+  <div class="grid cols">
+    <div class="card"><h3>Payment agreement</h3><p class="legal">Create a factual draft using the business/customer/invoice context.</p><button class="btn primary" onclick="openAgreement()">Create draft</button></div>
+    <div class="card"><h3>Payment notice</h3><p class="legal">Create a neutral commercial-payment notice without threats or unsupported legal claims.</p><button class="btn primary" onclick="openNotice()">Create draft</button></div>
+  </div>
+  <div class="notice" style="margin-top:14px">Before using a statutory remedy, verify the applicable Indian law, contract terms, limitation, tax position and eligibility with a qualified professional.</div>
+</section>
+
+<section id="settings" class="view">
+  <h1>Business settings</h1><p class="muted">Your account-level business profile.</p>
+  <div class="card" style="margin-top:15px"><form id="settingsForm"><div class="form-grid">
+    <div><label>Business name</label><input id="setName" class="input"></div><div><label>Phone</label><input id="setPhone" class="input"></div>
+    <div><label>Email</label><input id="setEmail" class="input" type="email"></div><div><label>Currency</label><select id="setCurrency" class="input"><option value="INR">INR — ₹</option></select></div>
+    <div class="wide"><label>Address</label><textarea id="setAddress" class="input" rows="3"></textarea></div>
+  </div><button class="btn primary" style="margin-top:14px">Save settings</button></form></div>
+  <div class="card" style="margin-top:15px"><h3>Account</h3><p id="accountUid" class="muted"></p><p class="mini">Data is scoped to your authenticated Firebase UID by Firestore security rules.</p></div>
+</section>
+<div class="footer">DUEFORCE · Receivables control · India-ready foundation</div>
+</main>
+<nav class="bottom-nav" id="bottomNav" aria-label="Mobile navigation">
+  <button type="button" data-view="dashboard" onclick="showView('dashboard')"><span class="bn-icon">⌂</span>Home</button>
+  <button type="button" data-view="customers" onclick="showView('customers')"><span class="bn-icon">♙</span>Customers</button>
+  <button type="button" data-view="invoices" onclick="showView('invoices')"><span class="bn-icon">▤</span>Invoices</button>
+  <button type="button" data-view="payments" onclick="showView('payments')"><span class="bn-icon">₹</span>Payments</button>
+  <button type="button" onclick="toggleNav()"><span class="bn-icon">☰</span>More</button>
+</nav>
+</div>
+
+<div id="modal" class="modal"><div class="modal-box"><div class="row"><h3 id="modalTitle">Modal</h3><button class="btn" onclick="closeModal()">Close</button></div><div id="modalBody" style="margin-top:12px"></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyC_OuoBMKD0uykpmrxSitoUgTQ9hNcBbjc",authDomain:"dueforce-926bb.firebaseapp.com",projectId:"dueforce-926bb",storageBucket:"dueforce-926bb.firebasestorage.app",messagingSenderId:"117017784287",appId:"1:117017784287:web:db19842bc7c2dbebb35e6a"};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let user=null,business={},customers=[],invoices=[],payments=[],reminders=[],authModeName='login';
+
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const money=v=>'₹'+Number(v||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const today=()=>new Date().toISOString().slice(0,10);
+const path=(collection,id='')=>'businesses/'+user.uid+'/'+collection+(id?'/'+id:'');
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2600)}
+function closeNav(){document.getElementById('mobileDrawer')?.classList.remove('open');document.getElementById('menuBackdrop')?.classList.remove('open');document.getElementById('mobileDrawer')?.setAttribute('aria-hidden','true')}
+function syncMobileChrome(){
+  const mobile=window.innerWidth<=1400;
+  document.body.classList.toggle('force-mobile-ui',mobile);
+  const nav=document.querySelector('.desktop-nav');
+  const menu=document.querySelector('.mobile-menu');
+  if(nav) nav.style.setProperty('display',mobile?'none':'flex','important');
+  if(menu) menu.style.setProperty('display',mobile?'inline-flex':'none','important');
+}
+window.addEventListener('resize',syncMobileChrome);
+window.addEventListener('orientationchange',()=>setTimeout(syncMobileChrome,50));
+document.addEventListener('DOMContentLoaded',syncMobileChrome);
+syncMobileChrome();
+function toggleNav(){const d=document.getElementById('mobileDrawer');const b=document.getElementById('menuBackdrop');const open=!d.classList.contains('open');d.classList.toggle('open',open);b.classList.toggle('open',open);d.setAttribute('aria-hidden',String(!open))}
+function mobileNavigate(id){showView(id);closeNav()}
+function showView(id){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(id)?.classList.add('active');document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===id));document.querySelector('.desktop-nav')?.classList.remove('open');document.querySelectorAll('.drawer-links [data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===id));closeNav()}
+document.querySelectorAll('.desktop-nav [data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+document.querySelectorAll('#bottomNav [data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+function setAuthMode(mode){authModeName=mode;$('businessNameWrap').classList.toggle('hidden',mode!=='signup');$('loginTab').classList.toggle('primary',mode==='login');$('signupTab').classList.toggle('primary',mode==='signup');$('authSubmit').textContent=mode==='signup'?'Create account':'Login';$('authError').textContent=''}
+$('authForm').addEventListener('submit',async e=>{
+ e.preventDefault();$('authError').textContent='';$('authSubmit').disabled=true;
+ try{
+  const email=$('authEmail').value.trim(),password=$('authPassword').value;
+  if(authModeName==='signup'){
+    const cred=await auth.createUserWithEmailAndPassword(email,password);
+    const name=$('businessName').value.trim()||'My Business';
+    await db.doc('businesses/'+cred.user.uid).set({ownerUid:cred.user.uid,name,currency:'INR',email,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await cred.user.updateProfile({displayName:name});
+  }else await auth.signInWithEmailAndPassword(email,password);
+ }catch(err){$('authError').textContent=humanAuthError(err)}
+ finally{$('authSubmit').disabled=false}
+});
+function humanAuthError(e){const c=e?.code||'';const map={'auth/email-already-in-use':'This email already has an account. Login instead.','auth/invalid-credential':'Email or password is incorrect.','auth/weak-password':'Use a stronger password (6+ characters).','auth/invalid-email':'Enter a valid email address.'};return map[c]||e?.message||'Something went wrong.'}
+auth.onAuthStateChanged(async u=>{
+ $('splash').style.display='none';
+ user=u||null;
+ if(!u){$('auth').classList.remove('hidden');$('app').classList.add('hidden');return}
+ $('auth').classList.add('hidden');$('app').classList.remove('hidden');$('accountUid').textContent='UID: '+u.uid;
+ try{await ensureBusiness();await loadData()}catch(e){toast(e.message||'Could not load your account')}
+});
+async function ensureBusiness(){
+ const ref=db.doc('businesses/'+user.uid),snap=await ref.get();
+ if(!snap.exists) await ref.set({ownerUid:user.uid,name:user.displayName||'My Business',currency:'INR',email:user.email||'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+ business=(await ref.get()).data()||{};
+ $('businessLabel').textContent=business.name||'Business';$('setName').value=business.name||'';$('setPhone').value=business.phone||'';$('setEmail').value=business.email||user.email||'';$('setAddress').value=business.address||'';$('setCurrency').value=business.currency||'INR';
+}
+async function loadData(){
+ const base='businesses/'+user.uid;
+ const [cs,is,ps,rs]=await Promise.all([db.collection(base+'/customers').get(),db.collection(base+'/invoices').get(),db.collection(base+'/payments').get(),db.collection(base+'/reminders').get()]);
+ customers=cs.docs.map(d=>({id:d.id,...d.data()}));invoices=is.docs.map(d=>({id:d.id,...d.data()}));payments=ps.docs.map(d=>({id:d.id,...d.data()}));reminders=rs.docs.map(d=>({id:d.id,...d.data()}));renderAll();
+}
+function renderAll(){
+ let outstanding=0,todayDue=0,overdue=0,total=0,paid=0;
+ invoices.forEach(i=>{const amount=Number(i.amount||0),p=Number(i.paidAmount||0),bal=Math.max(0,amount-p);outstanding+=bal;total+=amount;paid+=Math.min(amount,p);if(i.dueDate===today())todayDue+=bal;if(i.dueDate&&i.dueDate<today()&&bal>0)overdue+=bal});
+ $('mOutstanding').textContent=money(outstanding);$('mToday').textContent=money(todayDue);$('mOverdue').textContent=money(overdue);$('mRecovery').textContent=(total?((paid/total)*100).toFixed(1):'0')+'%';
+ $('recentInvoices').innerHTML=invoices.length?invoices.slice().sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).slice(0,5).map(invoiceMini).join(''):'<div class="empty">No invoices yet. Create your first invoice.</div>';
+ renderCustomers();renderInvoices();renderPayments();renderReminders();
+}
+function customerName(id){return customers.find(c=>c.id===id)?.name||'Unknown customer'}
+function balance(i){return Math.max(0,Number(i.amount||0)-Number(i.paidAmount||0))}
+function invoiceStatus(i){const b=balance(i);if(b<=0)return ['PAID','green'];if(i.dueDate&&i.dueDate<today())return ['OVERDUE','red'];if(i.dueDate===today())return ['DUE TODAY','gold'];return ['OPEN','blue']}
+function invoiceMini(i){const [st,cl]=invoiceStatus(i);return `<div class="row" style="padding:12px 0;border-bottom:1px solid var(--line)"><div><b>${esc(i.invoiceNumber||i.id)}</b><div class="muted">${esc(customerName(i.customerId))} · due ${esc(i.dueDate||'—')}</div></div><div style="text-align:right"><b>${money(balance(i))}</b><br><span class="pill ${cl}">${st}</span></div></div>`}
+function renderCustomers(){
+ const q=($('customerSearch')?.value||'').toLowerCase();
+ const list=customers.filter(c=>(c.name+' '+(c.phone||'')+' '+(c.email||'')).toLowerCase().includes(q));
+ $('customersTable').innerHTML=list.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Customer</th><th>Phone</th><th>Outstanding</th><th>Action</th></tr></thead><tbody>${list.map(c=>{const due=invoices.filter(i=>i.customerId===c.id).reduce((s,i)=>s+balance(i),0);return `<tr><td><b>${esc(c.name)}</b><br><span class="muted">${esc(c.email||'')}</span></td><td>${esc(c.phone||'')}</td><td>${money(due)}</td><td><div class="actions"><button class="btn small" onclick="openCustomerLedger('${c.id}')">Ledger</button><button class="btn small" onclick="openCustomerEdit('${c.id}')">Edit</button><button class="btn small danger" onclick="deleteCustomer('${c.id}')">Delete</button></div></td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">No customers yet.</div>';
+}
+function renderInvoices(){
+ $('invoicesTable').innerHTML=invoices.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Balance</th><th>Status</th><th>Action</th></tr></thead><tbody>${invoices.slice().reverse().map(i=>{const [st,cl]=invoiceStatus(i),b=balance(i);return `<tr><td><b>${esc(i.invoiceNumber||i.id)}</b><br><span class="muted">${esc(i.dueDate||'')}</span></td><td>${esc(customerName(i.customerId))}</td><td>${money(i.amount)}</td><td>${money(b)}</td><td><span class="pill ${cl}">${st}</span></td><td><div class="actions">${b?`<button class="btn small" onclick="openPayment('${i.id}')">Add payment</button>`:''}<button class="btn small" onclick="openInvoiceEdit('${i.id}')">Edit</button><button class="btn small" onclick="shareInvoice('${i.id}')">PDF + WhatsApp</button><button class="btn small danger" onclick="deleteInvoice('${i.id}')">Delete</button></div></td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">No invoices yet.</div>';
+}
+function renderPayments(){
+ $('paymentsTable').innerHTML=payments.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Invoice</th><th>Amount</th><th>Method</th><th>Reference</th><th>Action</th></tr></thead><tbody>${payments.slice().reverse().map(p=>`<tr><td>${p.createdAt?.toDate?p.createdAt.toDate().toLocaleString('en-IN'):esc(p.date||'')}</td><td>${esc(p.invoiceNumber||p.invoiceId||'')}</td><td>${money(p.amount)}</td><td>${esc(p.method||'Manual')}</td><td>${esc(p.reference||'')}</td><td><div class="actions"><button class="btn small" onclick="openPaymentEdit('${p.id}')">Edit</button><button class="btn small danger" onclick="deletePayment('${p.id}')">Delete</button></div></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No payments recorded.</div>';
+}
+function renderReminders(){
+ $('remindersTable').innerHTML=reminders.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Invoice</th><th>Channel</th><th>Status</th></tr></thead><tbody>${reminders.slice().reverse().map(r=>`<tr><td>${r.createdAt?.toDate?r.createdAt.toDate().toLocaleString('en-IN'):''}</td><td>${esc(r.invoiceId||'')}</td><td>${esc(r.channel||'')}</td><td><span class="pill">${esc(r.status||'QUEUED')}</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No reminders yet. Reminder history appears after a backend/provider sends an action.</div>';
+}
+function openModal(title,html){$('modalTitle').textContent=title;$('modalBody').innerHTML=html;$('modal').classList.add('show')}
+function closeModal(){$('modal').classList.remove('show')}
+$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
+function openCustomerEdit(id){
+ const c=customers.find(x=>x.id===id);if(!c)return;
+ openModal('Edit customer',`<form onsubmit="saveCustomerEdit(event,'${id}')"><div class="form-grid"><div><label>Name</label><input id="ecName" class="input" required value="${esc(c.name||'')}"></div><div><label>Phone / WhatsApp</label><input id="ecPhone" class="input" inputmode="tel" value="${esc(c.phone||'')}"></div><div><label>Email</label><input id="ecEmail" class="input" type="email" value="${esc(c.email||'')}"></div><div><label>Address</label><input id="ecAddress" class="input" value="${esc(c.address||'')}"></div></div><div class="actions" style="margin-top:15px"><button type="button" class="btn" onclick="closeModal()">Cancel</button><button class="btn primary">Save changes</button></div></form>`)
+}
+async function saveCustomerEdit(e,id){
+ e.preventDefault();
+ try{await db.doc(path('customers',id)).update({name:$('ecName').value.trim(),phone:$('ecPhone').value.trim(),email:$('ecEmail').value.trim(),address:$('ecAddress').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});closeModal();await loadData();toast('Customer updated')}catch(err){toast(err.message||'Could not update customer')}
+}
+async function deleteCustomer(id){
+ const c=customers.find(x=>x.id===id);if(!c)return;
+ if(invoices.some(i=>i.customerId===id)){toast('Cannot delete: this customer has invoices. Delete or reassign the invoices first.');return}
+ if(!confirm(`Delete customer "${c.name||''}"? This cannot be undone.`))return;
+ try{await db.doc(path('customers',id)).delete();await loadData();toast('Customer deleted')}catch(err){toast(err.message||'Could not delete customer')}
+}
+function openInvoiceEdit(id){
+ const i=invoices.find(x=>x.id===id);if(!i)return;
+ openModal('Edit invoice',`<form onsubmit="saveInvoiceEdit(event,'${id}')"><div class="form-grid"><div><label>Invoice number</label><input id="eiNo" class="input" required value="${esc(i.invoiceNumber||'')}"></div><div><label>Customer</label><select id="eiCustomer" class="input">${customers.map(c=>`<option value="${c.id}" ${c.id===i.customerId?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div><div><label>Amount (INR)</label><input id="eiAmount" class="input" type="number" min="0.01" step="0.01" required value="${Number(i.amount||0)}"></div><div><label>Due date</label><input id="eiDue" class="input" type="date" required value="${esc(i.dueDate||'')}"></div><div class="wide"><label>Notes</label><textarea id="eiNotes" class="input" rows="3">${esc(i.notes||'')}</textarea></div></div><p class="mini" style="margin-top:10px">Recorded paid amount: ${money(i.paidAmount||0)}. The invoice amount cannot be set below payments already recorded.</p><div class="actions" style="margin-top:15px"><button type="button" class="btn" onclick="closeModal()">Cancel</button><button class="btn primary">Save changes</button></div></form>`)
+}
+async function saveInvoiceEdit(e,id){
+ e.preventDefault();
+ try{
+  const i=invoices.find(x=>x.id===id);if(!i)throw new Error('Invoice not found');
+  const amount=Number($('eiAmount').value),paid=Number(i.paidAmount||0);if(!(amount>0))throw new Error('Amount must be greater than zero');if(amount<paid)throw new Error('Amount cannot be less than payments already recorded');
+  await db.doc(path('invoices',id)).update({invoiceNumber:$('eiNo').value.trim(),customerId:$('eiCustomer').value,amount,dueDate:$('eiDue').value,notes:$('eiNotes').value.trim(),status:paid>=amount?'PAID':'OPEN',reminderEnabled:paid<amount,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});closeModal();await loadData();toast('Invoice updated')
+ }catch(err){toast(err.message||'Could not update invoice')}
+}
+async function deleteInvoice(id){
+ const i=invoices.find(x=>x.id===id);if(!i)return;
+ if(!confirm(`Delete invoice "${i.invoiceNumber||i.id}" and its recorded payment/reminder history? This cannot be undone.`))return;
+ try{
+  const refs=[];
+  const ps=await db.collection(path('payments')).where('invoiceId','==',id).get();ps.forEach(d=>refs.push(d.ref));
+  const rs=await db.collection(path('reminders')).where('invoiceId','==',id).get();rs.forEach(d=>refs.push(d.ref));
+  const chunks=[];for(let n=0;n<refs.length;n+=450)chunks.push(refs.slice(n,n+450));
+  for(const chunk of chunks){const b=db.batch();chunk.forEach(r=>b.delete(r));await b.commit()}
+  await db.doc(path('invoices',id)).delete();await loadData();toast('Invoice deleted')
+ }catch(err){toast(err.message||'Could not delete invoice')}
+}
+function openPaymentEdit(id){
+ const p=payments.find(x=>x.id===id);if(!p)return;
+ const i=invoices.find(x=>x.id===p.invoiceId);if(!i)return toast('Linked invoice not found');
+ openModal('Edit payment',`<form onsubmit="savePaymentEdit(event,'${id}')"><p class="muted">${esc(p.invoiceNumber||i.invoiceNumber||i.id)} · invoice total ${money(i.amount)}</p><label>Payment amount</label><input id="epAmount" class="input" type="number" min="0.01" step="0.01" required value="${Number(p.amount||0)}"><label>Method</label><select id="epMethod" class="input"><option ${p.method==='UPI'?'selected':''}>UPI</option><option ${p.method==='Bank transfer'?'selected':''}>Bank transfer</option><option ${p.method==='Cash'?'selected':''}>Cash</option><option ${p.method==='Card'?'selected':''}>Card</option><option ${p.method==='Other'?'selected':''}>Other</option></select><label>Reference</label><input id="epRef" class="input" value="${esc(p.reference||'')}" placeholder="UTR / transaction reference"><div class="actions" style="margin-top:15px"><button type="button" class="btn" onclick="closeModal()">Cancel</button><button class="btn primary">Save changes</button></div></form>`)
+}
+async function savePaymentEdit(e,id){
+ e.preventDefault();
+ try{
+  const p=payments.find(x=>x.id===id);if(!p)throw new Error('Payment not found');
+  const i=invoices.find(x=>x.id===p.invoiceId);if(!i)throw new Error('Linked invoice not found');
+  const next=Number($('epAmount').value);if(!(next>0))throw new Error('Payment must be greater than zero');
+  const others=payments.filter(x=>x.invoiceId===p.invoiceId&&x.id!==id).reduce((s,x)=>s+Number(x.amount||0),0);if(others+next>Number(i.amount||0))throw new Error('Total payments cannot exceed invoice amount');
+  await db.doc(path('payments',id)).update({amount:next,method:$('epMethod').value,reference:$('epRef').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  await syncInvoicePaymentState(i.id);closeModal();await loadData();toast('Payment updated')
+ }catch(err){toast(err.message||'Could not update payment')}
+}
+async function deletePayment(id){
+ const p=payments.find(x=>x.id===id);if(!p)return;
+ if(!confirm(`Delete this ${money(p.amount)} payment from ${p.invoiceNumber||p.invoiceId}? The invoice balance will be recalculated.`))return;
+ try{await db.doc(path('payments',id)).delete();await syncInvoicePaymentState(p.invoiceId);await loadData();toast('Payment deleted and invoice balance recalculated')}catch(err){toast(err.message||'Could not delete payment')}
+}
+async function syncInvoicePaymentState(invoiceId){
+ const ref=db.doc(path('invoices',invoiceId));const snap=await ref.get();if(!snap.exists)return;
+ const i=snap.data();const ps=await db.collection(path('payments')).where('invoiceId','==',invoiceId).get();let paid=0;ps.forEach(d=>paid+=Number(d.data().amount||0));const total=Number(i.amount||0);const status=paid>=total?'PAID':'OPEN';await ref.update({paidAmount:Math.min(paid,total),status,reminderEnabled:paid<total,updatedAt:firebase.firestore.FieldValue.serverTimestamp()})
+}
+function openCustomer(){openModal('New customer',`<form onsubmit="saveCustomer(event)"><div class="form-grid"><div><label>Name</label><input id="cName" class="input" required></div><div><label>Phone / WhatsApp</label><input id="cPhone" class="input" inputmode="tel"></div><div><label>Email</label><input id="cEmail" class="input" type="email"></div><div><label>Address</label><input id="cAddress" class="input"></div></div><button class="btn primary" style="margin-top:15px">Save customer</button></form>`)}
+async function saveCustomer(e){e.preventDefault();await db.collection(path('customers')).add({name:$('cName').value.trim(),phone:$('cPhone').value.trim(),email:$('cEmail').value.trim(),address:$('cAddress').value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});closeModal();await loadData();toast('Customer saved')}
+function openInvoice(){
+ if(!customers.length){toast('Create a customer first');showView('customers');return}
+ const suggested='INV-'+String(invoices.length+1).padStart(4,'0');
+ openModal('New invoice',`<form onsubmit="saveInvoice(event)"><div class="form-grid"><div><label>Invoice number</label><input id="iNo" class="input" required value="${suggested}"></div><div><label>Customer</label><select id="iCustomer" class="input">${customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div><div><label>Amount (INR)</label><input id="iAmount" class="input" type="number" min="0.01" step="0.01" required></div><div><label>Due date</label><input id="iDue" class="input" type="date" required></div><div class="wide"><label>Notes</label><textarea id="iNotes" class="input" rows="3"></textarea></div></div><button class="btn primary" style="margin-top:15px">Create invoice</button></form>`);
+}
+async function saveInvoice(e){
+ e.preventDefault();const amount=Number($('iAmount').value);if(!(amount>0))return;
+ await db.collection(path('invoices')).add({invoiceNumber:$('iNo').value.trim(),customerId:$('iCustomer').value,amount,paidAmount:0,dueDate:$('iDue').value,status:'OPEN',reminderEnabled:true,notes:$('iNotes').value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+ closeModal();await loadData();toast('Invoice created');
+}
+function openPayment(id){
+ const i=invoices.find(x=>x.id===id),b=balance(i);if(!i||b<=0)return;
+ openModal('Record payment',`<form onsubmit="savePayment(event,'${id}')"><p class="muted">${esc(i.invoiceNumber)} · current balance ${money(b)}</p><label>Payment amount</label><input id="pAmount" class="input" type="number" min="0.01" max="${b}" step="0.01" required><label>Method</label><select id="pMethod" class="input"><option>UPI</option><option>Bank transfer</option><option>Cash</option><option>Card</option><option>Other</option></select><label>Reference</label><input id="pRef" class="input" placeholder="UTR / transaction reference"><button class="btn primary" style="margin-top:15px">Save payment</button></form>`);
+}
+async function savePayment(e,id){
+ e.preventDefault();const amount=Number($('pAmount').value);const ref=db.doc(path('invoices',id));await db.runTransaction(async t=>{const snap=await t.get(ref);if(!snap.exists)throw new Error('Invoice not found');const i=snap.data(),current=balance(i);if(!(amount>0)||amount>current)throw new Error('Payment amount exceeds balance');const paid=Number(i.paidAmount||0)+amount,status=paid>=Number(i.amount||0)?'PAID':'PARTIAL';t.update(ref,{paidAmount:paid,status,reminderEnabled:status!=='PAID',updatedAt:firebase.firestore.FieldValue.serverTimestamp()});t.set(db.collection(path('payments')).doc(),{invoiceId:id,invoiceNumber:i.invoiceNumber||id,amount,method:$('pMethod').value,reference:$('pRef').value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp()})});
+ closeModal();await loadData();toast('Payment recorded');
+}
+
+function phoneDigits(phone){return String(phone||'').replace(/\D/g,'').replace(/^0+/,'');}
+function invoicePdfBlob(i){
+  const {jsPDF}=window.jspdf||{}; if(!jsPDF) throw new Error('PDF library not loaded');
+  const c=customers.find(x=>x.id===i.customerId)||{};
+  const doc=new jsPDF();
+  const amount=Number(i.amount||0), paid=Number(i.paidAmount||0), bal=Math.max(0,amount-paid);
+  doc.setFontSize(20); doc.text(business.name||'DUEFORCE Business',20,25);
+  doc.setFontSize(12); doc.text('PAYMENT / DUE INVOICE',20,35);
+  doc.line(20,40,190,40);
+  const rows=[['Invoice',i.invoiceNumber||i.id],['Customer',c.name||'—'],['WhatsApp',c.phone||'—'],['Due date',i.dueDate||'—'],['Amount','₹'+amount.toLocaleString('en-IN')],['Paid','₹'+paid.toLocaleString('en-IN')],['Outstanding','₹'+bal.toLocaleString('en-IN')],['Status',invoiceStatus(i)[0]]];
+  let y=52; doc.setFontSize(11);
+  rows.forEach(([k,v])=>{doc.setFont(undefined,'bold');doc.text(k,25,y);doc.setFont(undefined,'normal');doc.text(String(v),80,y);y+=10;});
+  if(i.notes){y+=5;doc.setFont(undefined,'bold');doc.text('Notes',25,y);doc.setFont(undefined,'normal');doc.text(String(i.notes).slice(0,110),25,y+8,{maxWidth:165});}
+  doc.setFontSize(9);doc.text('Generated by DUEFORCE. Verify invoice details before sending.',20,280);
+  return doc.output('blob');
+}
+async function shareInvoice(id){
+  try{
+    const i=invoices.find(x=>x.id===id); if(!i) return toast('Invoice not found');
+    const c=customers.find(x=>x.id===i.customerId)||{}; const digits=phoneDigits(c.phone);
+    if(!digits) return toast('Add customer WhatsApp number first');
+    const blob=invoicePdfBlob(i); const file=new File([blob],`${i.invoiceNumber||'invoice'}.pdf`,{type:'application/pdf'});
+    const message=`Hello ${c.name||''},%0A%0AInvoice ${i.invoiceNumber||i.id} is due on ${i.dueDate||'—'}.%0AOutstanding: ₹${balance(i).toLocaleString('en-IN')}%0A%0APlease find the invoice PDF attached.%0AThank you.`;
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({text:decodeURIComponent(message),files:[file],title:`Invoice ${i.invoiceNumber||i.id}`});
+      return;
+    }
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${i.invoiceNumber||'invoice'}.pdf`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+    window.open(`https://wa.me/${digits}?text=${message}`,'_blank');
+    toast('PDF downloaded. WhatsApp opened — attach the PDF and send.');
+  }catch(e){toast(e.message||'Could not prepare PDF');}
+}
+function openCustomerLedger(id){
+ const c=customers.find(x=>x.id===id);if(!c)return;
+ const rows=invoices.filter(i=>i.customerId===id);const total=rows.reduce((s,i)=>s+balance(i),0);
+ openModal('Customer ledger',`<h3>${esc(c.name)}</h3><p class="muted">${esc(c.phone||'')} ${c.email?'· '+esc(c.email):''}</p><div class="card" style="margin:12px 0"><span class="muted">Outstanding</span><div class="metric">${money(total)}</div></div>${rows.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Invoice</th><th>Due</th><th>Balance</th><th>Status</th></tr></thead><tbody>${rows.map(i=>{const [s,cl]=invoiceStatus(i);return `<tr><td>${esc(i.invoiceNumber||i.id)}</td><td>${esc(i.dueDate||'—')}</td><td>${money(balance(i))}</td><td><span class="pill ${cl}">${s}</span></td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">No invoices for this customer.</div>'}`);
+}
+function openAgreement(){openModal('Payment agreement draft',`<div class="legal"><p><b>COMMERCIAL PAYMENT AGREEMENT — DRAFT</b></p><p>Business: <b>${esc(business.name||'Business')}</b></p><p>This draft records agreed commercial payment terms between the business and the identified customer. Complete the invoice reference, goods/services, amount, due date, delivery/acceptance terms, dispute process, late-payment terms and applicable law accurately before signature.</p><div class="danger-note">Drafting aid only. Review with a qualified Indian lawyer where legal enforceability or statutory remedies matter.</div><button class="btn primary" style="margin-top:15px" onclick="window.print()">Print / Save PDF</button></div>`)}
+function openNotice(){openModal('Payment notice draft',`<div class="legal"><p><b>COMMERCIAL PAYMENT NOTICE — DRAFT</b></p><p>Business: <b>${esc(business.name||'Business')}</b></p><p>This notice requests payment of an identified commercial balance. Use only accurate invoice numbers, due dates, amounts and supporting records. Do not add threats, harassment or unsupported legal conclusions.</p><div class="danger-note">Verify any statutory remedy, limitation period and eligibility before sending. Legal review may be appropriate.</div><button class="btn primary" style="margin-top:15px" onclick="window.print()">Print / Save PDF</button></div>`)}
+$('settingsForm').addEventListener('submit',async e=>{e.preventDefault();await db.doc('businesses/'+user.uid).set({name:$('setName').value.trim()||'My Business',phone:$('setPhone').value.trim(),email:$('setEmail').value.trim(),address:$('setAddress').value.trim(),currency:$('setCurrency').value,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});await ensureBusiness();toast('Settings saved')});
+function logout(){auth.signOut()}
+setTimeout(()=>{$('splash').style.display='none'},1900);
+</script>
+
+<script>
+(function(){
+  function syncMobileChrome(){
+    const mobile = window.innerWidth <= 1400;
+    document.body.classList.toggle('force-mobile-ui', mobile);
+    const nav = document.querySelector('.desktop-nav');
+    const menu = document.querySelector('.mobile-menu');
+    if(nav) nav.style.display = mobile ? 'none' : '';
+    if(menu) menu.style.display = mobile ? 'inline-flex' : '';
+  }
+  window.addEventListener('resize', syncMobileChrome);
+  window.addEventListener('orientationchange', syncMobileChrome);
+  setTimeout(syncMobileChrome, 0);
+})();
+</script>
+</body>
+</html>
