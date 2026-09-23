@@ -1,7 +1,7 @@
-# Legal disclaimer
+# Legal/document disclaimer
 
-DUEFORCE's agreement and notice features are drafting and workflow aids. They do not determine liability, create legal rights by themselves, or replace advice from a qualified lawyer.
+DUEFORCE generates commercial records, payment reminders and drafting aids. It is not a law firm, advocate, court, arbitrator, tax adviser or recovery agency. A generated document is not a court order and does not by itself establish liability, MSMED Act eligibility, statutory interest, jurisdiction, limitation, service, or a right to recover.
 
-Users must verify the transaction facts, contract terms, invoice records, limitation, jurisdiction, tax requirements, communication permissions, statutory eligibility and applicable law before sending any legal notice or relying on a statutory remedy.
+Before formal service or enforcement, verify the underlying contract, invoice, delivery/acceptance records, payment history, GST/tax treatment, Udyam status, statutory eligibility, limitation, jurisdiction and applicable procedure with a qualified professional.
 
-The product should not be used for threats, harassment, public shaming, contacting unrelated third parties, deceptive claims, or unauthorized collection actions.
+Where the MSMED Act, 2006 is referenced, DUEFORCE uses conditional wording. Sections 15–18 may be relevant to delayed payments for eligible Micro/Small Enterprises, but applicability must be verified for the actual enterprise and transaction.
