@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dueforce-926bb.web.app/sitemap.xml
