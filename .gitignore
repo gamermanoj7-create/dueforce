@@ -4,3 +4,14 @@ node_modules/
 .env.*
 functions/.env*
 .DS_Store
+
+# Firebase Admin credentials
+*firebase-adminsdk*.json
+serviceAccount*.json
+*-service-account*.json
+
+# Local backups / archived project copies
+BusinessOS-ERP/
+DUEFORCE-*-BACKUP*/
+DUEFORCE-*-EXTRACT/
+DUEFORCE-REAL-PRODUCTION/
