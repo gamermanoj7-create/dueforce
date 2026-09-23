@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function adminPath() { return /databases/$(database)/documents/admin/config; }
+    function isAdmin() {
+      return signedIn() && exists(adminPath()) && get(adminPath()).data.uid == request.auth.uid;
+    }
+    function validBusinessCreate(uid) { return isOwner(uid) && request.resource.data.ownerUid == uid; }
+
+    match /admin/config {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if false;
+      allow update, delete: if isAdmin();
+    }
+
+    match /businesses/{uid} {
+      allow create: if validBusinessCreate(uid);
+      allow read: if isOwner(uid) && resource.data.ownerUid == uid;
+      allow update: if (isOwner(uid) && resource.data.ownerUid == uid)
+        || (isAdmin()
+          && request.resource.data.ownerUid == resource.data.ownerUid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'planId','planStatus','planStartedAt','planExpiresAt',
+            'subscriptionRequestId','updatedAt'
+          ]));
+      allow delete: if false;
+      match /customers/{id} { allow read, create, update, delete: if isOwner(uid); }
+      match /invoices/{id} { allow read, create, update, delete: if isOwner(uid); }
+      match /payments/{id} { allow read, create: if isOwner(uid); allow update, delete: if false; }
+      match /reminders/{id} { allow read, create: if isOwner(uid); allow update, delete: if false; }
+      match /automationRules/{id} { allow read, create, update, delete: if isOwner(uid); }
+      match /legalDrafts/{id} { allow read, create, update, delete: if isOwner(uid); }
+    }
+
+    match /subscriptionRequests/{id} {
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.amount is number
+        && request.resource.data.planId in ['starter','business','pro']
+        && ((request.resource.data.planId == 'starter' && request.resource.data.amount == 199)
+          || (request.resource.data.planId == 'business' && request.resource.data.amount == 499)
+          || (request.resource.data.planId == 'pro' && request.resource.data.amount == 999))
+        && request.resource.data.upiId == '7029714746-2@ybl';
+
+      allow read: if signedIn() && (resource.data.ownerUid == request.auth.uid || isAdmin());
+
+      allow update: if isAdmin()
+        && request.resource.data.status in ['approved','rejected']
+        && resource.data.status == 'pending'
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.planId == resource.data.planId
+        && request.resource.data.amount == resource.data.amount
+        && request.resource.data.upiId == resource.data.upiId
+        && (
+          (request.resource.data.status == 'approved'
+            && request.resource.data.approvedBy == request.auth.uid
+            && request.resource.data.approvedAt is timestamp
+            && request.resource.data.expiresAt is timestamp)
+          ||
+          (request.resource.data.status == 'rejected'
+            && request.resource.data.reviewedBy == request.auth.uid)
+        );
+
+      allow delete: if false;
+    }
+
+    match /webhookEvents/{id} { allow read, write: if false; }
+  }
+}
